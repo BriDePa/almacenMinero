@@ -38,9 +38,12 @@
     </div>
 
     <div class="col-md-7">
-        <div class="card">
-            <div class="card-header">
-                <h5>Inventario Actual</h5>
+        <div class="card" id="inventario-section">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Inventario Actual</h5>
+                <button class="btn btn-outline-primary btn-sm" onclick="printSection('inventario-section')" type="button">
+                    Imprimir Inventario
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -82,4 +85,14 @@
         </div>
     </div>
 </div>
+<script>
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload();
+    }
+</script>
 {% endblock %}

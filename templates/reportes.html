@@ -5,9 +5,12 @@
 
 <div class="row mt-4">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-warning">
-                <h5>Materiales con Stock Bajo</h5>
+        <div class="card" id="stock-bajo-section">
+            <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Materiales con Stock Bajo</h5>
+                <button class="btn btn-danger btn-sm" onclick="printSection('stock-bajo-section')">
+                    Imprimir esta sección
+                </button>
             </div>
             <div class="card-body">
                 {% if stock_bajo %}
@@ -41,9 +44,12 @@
     </div>
 
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-info">
-                <h5>Movimientos Recientes (30 días)</h5>
+        <div class="card" id="movimientos-section">
+            <div class="card-header bg-info d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Movimientos Recientes (30 días)</h5>
+                <button class="btn btn-primary btn-sm" onclick="printSection('movimientos-section')">
+                    Imprimir esta sección
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -80,4 +86,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    function printSection(sectionId) {
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload(); 
+    }
+</script>
 {% endblock %}
