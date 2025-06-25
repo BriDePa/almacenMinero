@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Registro de Movimientos</h2>
+
+<div class="row mt-4">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h5>Registrar Movimiento</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Material</label>
+                        <select class="form-select" name="id_material" required>
+                            <option value="">Seleccionar...</option>
+                            {% for mat in materiales %}
+                            <option value="{{ mat['id_material'] }}">{{ mat['codigo'] }} - {{ mat['nombre'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Movimiento</label>
+                        <select class="form-select" name="tipo" required>
+                            <option value="entrada">Entrada</option>
+                            <option value="salida">Salida</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" min="0" class="form-control" name="cantidad" required value="">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Responsable</label>
+                        <input type="text" class="form-control" name="responsable" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Proyecto/Área</label>
+                        <input type="text" class="form-control" name="proyecto">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control" name="observaciones" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h5>Historial Reciente</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Material</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                                <th>Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mov in movimientos %}
+                            <tr>
+                                <td>{{ mov['fecha_movimiento'][:16] }}</td>
+                                <td>{{ mov['id_material'] }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if mov['tipo_movimiento'] == 'entrada' else 'warning' }}">
+                                        {{ mov['tipo_movimiento']|upper }}
+                                    </span>
+                                </td>
+                                <td>{{ "%.2f"|format(mov['cantidad']) }}</td>
+                                <td>{{ mov['responsable'] }}</td>
+                                <td>{{mov['proyecto_destino']}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

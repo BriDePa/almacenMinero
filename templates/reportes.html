@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Reportes</h2>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5>Materiales con Stock Bajo</h5>
+            </div>
+            <div class="card-body">
+                {% if stock_bajo %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Stock Actual</th>
+                                <th>Stock Mínimo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mat in stock_bajo %}
+                            <tr>
+                                <td>{{ mat['codigo'] }}</td>
+                                <td>{{ mat['nombre'] }}</td>
+                                <td class="text-danger">{{ "%.2f"|format(mat['stock_actual']) }}</td>
+                                <td>{{ "%.2f"|format(mat['stock_minimo']) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-success">No hay materiales con stock bajo</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5>Movimientos Recientes (30 días)</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Material</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mov in movimientos_recientes %}
+                            <tr>
+                                <td>{{ mov['fecha_movimiento'][:10] }}</td>
+                                <td>{{ mov['codigo'] }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if mov['tipo_movimiento'] == 'entrada' else 'warning' }}">
+                                        {{ mov['tipo_movimiento']|upper }}
+                                    </span>
+                                </td>
+                                <td>{{ "%.2f"|format(mov['cantidad']) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
