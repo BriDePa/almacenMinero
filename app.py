@@ -3,105 +3,163 @@ import sqlite3
 from database import get_db, query_db
 
 app = Flask(__name__)
-app.secret_key = '1201'
+app.secret_key = "1201"
+
 
 # Cerrar la conexión a la base de datos al finalizar
 @app.teardown_appcontext
 def close_db(error):
-    if hasattr(g, '_database'):
+    if hasattr(g, "_database"):
         g._database.close()
 
-# 
-@app.route('/')
+
+#
+@app.route("/")
 def index():
-    return render_template('base.html')
+    return render_template("base.html")
+
 
 # Gestión de Materiales
-@app.route('/materiales', methods=['GET', 'POST'])
+@app.route("/materiales", methods=["GET", "POST"])
 def materiales():
     db = get_db()
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         # Agregar nuevo material
-        codigo = request.form['codigo']
-        nombre = request.form['nombre']
-        descripcion = request.form['descripcion']
-        unidad_medida = request.form['unidad_medida']
-        stock_minimo = request.form['stock_minimo']
-        
+        codigo = request.form["codigo"]
+        nombre = request.form["nombre"]
+        descripcion = request.form["descripcion"]
+        unidad_medida = request.form["unidad_medida"]
+        stock_minimo = request.form["stock_minimo"]
+
         try:
             db.execute(
                 "INSERT INTO Materiales (codigo, nombre, descripcion, unidad_medida, stock_minimo) "
                 "VALUES (?, ?, ?, ?, ?)",
-                (codigo, nombre, descripcion, unidad_medida, stock_minimo)
+                (codigo, nombre, descripcion, unidad_medida, stock_minimo),
             )
             db.commit()
-            flash('Material agregado correctamente', 'success')
+            flash("Material agregado correctamente", "success")
         except sqlite3.IntegrityError:
-            flash('Error: El código ya existe', 'danger')
-        
-        return redirect(url_for('materiales'))
-    
+            flash("Error: El código ya existe", "danger")
+
+        return redirect(url_for("materiales"))
+
     # Listar materiales
     materiales = query_db("SELECT * FROM VistaStock")
-    return render_template('materiales.html', materiales=materiales)
+    return render_template("materiales.html", materiales=materiales)
+
+
+# Eliminar material
+@app.route("/materiales/eliminar/<int:id_material>", methods=["POST"])
+def eliminar_material(id_material):
+    db = get_db()
+    try:
+        db.execute("DELETE FROM Materiales WHERE id_material = ?", (id_material,))
+        db.commit()
+        flash("Material eliminado correctamente", "success")
+    except Exception as e:
+        flash(f"Error al eliminar: {str(e)}", "danger")
+    return redirect(url_for("materiales"))
+
+
+# Editar material (mostrar formulario y actualizar)
+@app.route("/materiales/editar/<int:id_material>", methods=["GET", "POST"])
+def editar_material(id_material):
+    db = get_db()
+    if request.method == "POST":
+        codigo = request.form["codigo"]
+        nombre = request.form["nombre"]
+        descripcion = request.form["descripcion"]
+        unidad_medida = request.form["unidad_medida"]
+        stock_minimo = request.form["stock_minimo"]
+        try:
+            db.execute(
+                """
+                UPDATE Materiales SET codigo=?, nombre=?, descripcion=?, unidad_medida=?, stock_minimo=?
+                WHERE id_material=?
+            """,
+                (codigo, nombre, descripcion, unidad_medida, stock_minimo, id_material),
+            )
+            db.commit()
+            flash("Material actualizado correctamente", "success")
+            return redirect(url_for("materiales"))
+        except Exception as e:
+            flash(f"Error al actualizar: {str(e)}", "danger")
+    # GET: mostrar datos actuales
+    material = query_db(
+        "SELECT * FROM Materiales WHERE id_material = ?", [id_material], one=True
+    )
+    return render_template("editar_material.html", material=material)
+
 
 # Gestión de Movimientos
-@app.route('/movimientos', methods=['GET', 'POST'])
+@app.route("/movimientos", methods=["GET", "POST"])
 def movimientos():
     db = get_db()
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         # Registrar movimiento
-        id_material = request.form['id_material']
-        tipo = request.form['tipo']
-        cantidad = float(request.form['cantidad'])
-        responsable = request.form['responsable']
-        proyecto = request.form.get('proyecto', '')
-        observaciones = request.form.get('observaciones', '')
-        
+        id_material = request.form["id_material"]
+        tipo = request.form["tipo"]
+        cantidad = float(request.form["cantidad"])
+        responsable = request.form["responsable"]
+        proyecto = request.form.get("proyecto", "")
+        observaciones = request.form.get("observaciones", "")
+
         # Validar stock para salidas
-        if tipo == 'salida':
-            stock = query_db("SELECT stock_actual FROM Materiales WHERE id_material = ?", 
-                            [id_material], one=True)
-            if stock and stock['stock_actual'] < cantidad:
-                flash('Error: Stock insuficiente', 'danger')
-                return redirect(url_for('movimientos'))
-        
+        if tipo == "salida":
+            stock = query_db(
+                "SELECT stock_actual FROM Materiales WHERE id_material = ?",
+                [id_material],
+                one=True,
+            )
+            if stock and stock["stock_actual"] < cantidad:
+                flash("Error: Stock insuficiente", "danger")
+                return redirect(url_for("movimientos"))
+
         try:
             db.execute(
                 "INSERT INTO Movimientos (id_material, tipo_movimiento, cantidad, responsable, proyecto_destino, observaciones) "
                 "VALUES (?, ?, ?, ?, ?, ?)",
-                (id_material, tipo, cantidad, responsable, proyecto, observaciones)
+                (id_material, tipo, cantidad, responsable, proyecto, observaciones),
             )
             db.commit()
-            flash('Movimiento registrado correctamente', 'success')
+            flash("Movimiento registrado correctamente", "success")
         except Exception as e:
-            flash(f'Error: {str(e)}', 'danger')
-        
-        return redirect(url_for('movimientos'))
-    
+            flash(f"Error: {str(e)}", "danger")
+
+        return redirect(url_for("movimientos"))
+
     # Listar movimientos y materiales disponibles
     movimientos = query_db("SELECT * FROM VistaHistorial LIMIT 500")
-    materiales = query_db("SELECT id_material, codigo, nombre FROM Materiales WHERE activo = 1")
-    return render_template('movimientos.html', movimientos=movimientos, materiales=materiales)
+    materiales = query_db(
+        "SELECT id_material, codigo, nombre FROM Materiales WHERE activo = 1"
+    )
+    return render_template(
+        "movimientos.html", movimientos=movimientos, materiales=materiales
+    )
+
 
 # Reportes
-@app.route('/reportes')
+@app.route("/reportes")
 def reportes():
     # Materiales con stock bajo
     stock_bajo = query_db("SELECT * FROM VistaStock WHERE estado = 'REORDEN'")
-    
+
     # Movimientos recientes
     movimientos_recientes = query_db(
         "SELECT * FROM VistaHistorial "
         "WHERE date(fecha_movimiento) >= date('now', '-30 day') "
         "ORDER BY fecha_movimiento DESC"
     )
-    
-    return render_template('reportes.html', 
-                         stock_bajo=stock_bajo,
-                         movimientos_recientes=movimientos_recientes)
 
-if __name__ == '__main__':
+    return render_template(
+        "reportes.html",
+        stock_bajo=stock_bajo,
+        movimientos_recientes=movimientos_recientes,
+    )
+
+
+if __name__ == "__main__":
     app.run(debug=True)
