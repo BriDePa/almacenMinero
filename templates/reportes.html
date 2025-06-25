@@ -54,19 +54,23 @@
                                 <th>Material</th>
                                 <th>Tipo</th>
                                 <th>Cantidad</th>
+                                <th>Responsable</th>
+                                <th>Destino</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for mov in movimientos_recientes %}
                             <tr>
-                                <td>{{ mov['fecha_movimiento'][:10] }}</td>
-                                <td>{{ mov['codigo'] }}</td>
+                                <td>{{ mov['fecha_movimiento'][:16] }}</td>
+                                <td>{{ mov['material'] }}</td>
                                 <td>
                                     <span class="badge bg-{{ 'success' if mov['tipo_movimiento'] == 'entrada' else 'warning' }}">
                                         {{ mov['tipo_movimiento']|upper }}
                                     </span>
                                 </td>
                                 <td>{{ "%.2f"|format(mov['cantidad']) }}</td>
+                                <td>{{ mov['responsable']}}</td>
+                                <td>{{ mov['proyecto_destino']}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

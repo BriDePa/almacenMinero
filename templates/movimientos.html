@@ -64,13 +64,14 @@
                                 <th>Tipo</th>
                                 <th>Cantidad</th>
                                 <th>Responsable</th>
+                                <th>Destino</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for mov in movimientos %}
                             <tr>
                                 <td>{{ mov['fecha_movimiento'][:16] }}</td>
-                                <td>{{ mov['id_material'] }}</td>
+                                <td>{{ mov['material'] }}</td>
                                 <td>
                                     <span class="badge bg-{{ 'success' if mov['tipo_movimiento'] == 'entrada' else 'warning' }}">
                                         {{ mov['tipo_movimiento']|upper }}

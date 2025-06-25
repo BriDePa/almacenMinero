@@ -33,7 +33,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </form>
-            </div>  
+            </div>
         </div>
     </div>
 
@@ -59,9 +59,13 @@
                             <tr>
                                 <td>{{ mat['codigo'] }}</td>
                                 <td>{{ mat['nombre'] }}</td>
-                                <td>{{ "%.2f"|format(mat['stock_minimo']+mat['stock_actual']) }}</td>
+                                <td>{{ "%.2f"|format(mat['stock_actual']) }}</td>
                                 <td>{{ mat['unidad_medida'] }}</td>
-                                
+                                <td>
+                                    <span class="badge bg-{% if mat['estado'] == 'OK' %}success{% else %}warning{% endif %}">
+                                        {{ mat['estado'] }}
+                                    </span>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
