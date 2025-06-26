@@ -37,8 +37,7 @@ SELECT
     CASE WHEN m.stock_actual <= m.stock_minimo THEN 'REORDEN' ELSE 'OK' END AS estado
 FROM Materiales m
 
-WHERE m.activo = 1
-AND m.stock_actual > 0;
+WHERE m.activo = 1;
 
 CREATE VIEW IF NOT EXISTS VistaHistorial AS
 SELECT 
