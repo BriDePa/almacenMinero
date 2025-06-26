@@ -8,9 +8,9 @@
         <div class="card" id="stock-bajo-section">
             <div class="card-header bg-warning d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Materiales con Stock Bajo</h5>
-                <button class="btn btn-danger btn-sm" onclick="printSection('stock-bajo-section')">
+                {# <button class="btn btn-danger btn-sm" onclick="printSection('stock-bajo-section')">
                     Imprimir esta sección
-                </button>
+                </button> #}
             </div>
             <div class="card-body">
                 {% if stock_bajo %}
@@ -47,9 +47,9 @@
         <div class="card" id="movimientos-section">
             <div class="card-header bg-info d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Movimientos Recientes (30 días)</h5>
-                <button class="btn btn-primary btn-sm" onclick="printSection('movimientos-section')">
+                {# <button class="btn btn-primary btn-sm" onclick="printSection('movimientos-section')">
                     Imprimir esta sección
-                </button>
+                </button> #}
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -62,6 +62,7 @@
                                 <th>Cantidad</th>
                                 <th>Responsable</th>
                                 <th>Destino</th>
+                                <th>Observacion</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,6 +78,7 @@
                                 <td>{{ "%.2f"|format(mov['cantidad']) }}</td>
                                 <td>{{ mov['responsable']}}</td>
                                 <td>{{ mov['proyecto_destino']}}</td>
+                                <td>{{ mov['observaciones']}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

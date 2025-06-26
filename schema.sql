@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Materiales (
     unidad_medida TEXT NOT NULL,
     stock_actual REAL NOT NULL DEFAULT 0,
     stock_minimo REAL DEFAULT 0,
-    fecha_creacion TEXT DEFAULT CURRENT_TIMESTAMP,
+    fecha_movimiento TEXT DEFAULT (datetime('now', 'localtime')),
     activo INTEGER DEFAULT 1
 );
 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Movimientos (
     id_material INTEGER NOT NULL,
     tipo_movimiento TEXT CHECK(tipo_movimiento IN ('entrada', 'salida')) NOT NULL,
     cantidad REAL NOT NULL,
-    fecha_movimiento TEXT DEFAULT CURRENT_TIMESTAMP,
+    fecha_movimiento TEXT DEFAULT (datetime('now', 'localtime')),
     responsable TEXT NOT NULL,
     proyecto_destino TEXT,
     observaciones TEXT,
