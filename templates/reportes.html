@@ -4,13 +4,54 @@
 <h2>Reportes</h2>
 
 <div class="row mt-4">
-    <div class="col-md-6">
+    <div class="col-md-12 mb-4">
+        <form class="card card-body" method="get" action="">
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label for="fecha_inicio" class="form-label">Fecha inicio</label>
+                    <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ request.args.get('fecha_inicio', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="fecha_fin" class="form-label">Fecha fin</label>
+                    <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ request.args.get('fecha_fin', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="tipo_movimiento" class="form-label">Tipo de movimiento</label>
+                    <select class="form-select" id="tipo_movimiento" name="tipo_movimiento">
+                        <option value="">Todos</option>
+                        <option value="entrada" {% if request.args.get('tipo_movimiento')=='entrada' %}selected{% endif %}>Entrada</option>
+                        <option value="salida" {% if request.args.get('tipo_movimiento')=='salida' %}selected{% endif %}>Salida</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="material" class="form-label">Material</label>
+                    <select class="form-select" id="material" name="material">
+                        <option value="">Todos</option>
+                        {% for mat in materiales %}
+                        <option value="{{ mat['nombre'] }}" {% if request.args.get('material')==mat['nombre'] %}selected{% endif %}>{{ mat['nombre'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <button type="button" class="btn btn-secondary ms-2" onclick="window.location.href=window.location.pathname">Limpiar</button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="button" class="btn btn-success" onclick="printSection('movimientos-section')">Imprimir movimientos</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4">
         <div class="card" id="stock-bajo-section">
             <div class="card-header bg-warning d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Materiales con Stock Bajo</h5>
-                {# <button class="btn btn-danger btn-sm" onclick="printSection('stock-bajo-section')">
-                    Imprimir esta sección
-                </button> #}
+                <button class="btn btn-danger btn-sm" onclick="printSection('stock-bajo-section')">
+                    Imprimir
+                </button>
             </div>
             <div class="card-body">
                 {% if stock_bajo %}
@@ -43,7 +84,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="card" id="movimientos-section">
             <div class="card-header bg-info d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Movimientos Recientes (30 días)</h5>
@@ -96,7 +137,7 @@
         document.body.innerHTML = printContents;
         window.print();
         document.body.innerHTML = originalContents;
-        location.reload(); 
+        location.reload();
     }
 </script>
 {% endblock %}

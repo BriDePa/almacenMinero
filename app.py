@@ -147,17 +147,46 @@ def reportes():
     # Materiales con stock bajo
     stock_bajo = query_db("SELECT * FROM VistaStock WHERE estado = 'REORDEN'")
 
-    # Movimientos recientes
-    movimientos_recientes = query_db(
-        "SELECT * FROM VistaHistorial "
-        "WHERE date(fecha_movimiento) >= date('now', '-30 day') "
-        "ORDER BY fecha_movimiento DESC"
+    # Filtros
+    fecha_inicio = request.args.get("fecha_inicio")
+    fecha_fin = request.args.get("fecha_fin")
+    tipo_movimiento = request.args.get("tipo_movimiento")
+    material = request.args.get("material")
+
+    # Base de la consulta
+    query = "SELECT * FROM VistaHistorial WHERE 1=1"
+    params = []
+
+    # Filtro por fechas
+    if fecha_inicio:
+        query += " AND date(fecha_movimiento) >= date(?)"
+        params.append(fecha_inicio)
+    if fecha_fin:
+        query += " AND date(fecha_movimiento) <= date(?)"
+        params.append(fecha_fin)
+    # Filtro por tipo
+    if tipo_movimiento:
+        query += " AND tipo_movimiento = ?"
+        params.append(tipo_movimiento)
+    # Filtro por material
+    if material:
+        query += " AND material = ?"
+        params.append(material)
+
+    query += " ORDER BY fecha_movimiento DESC LIMIT 500"
+    movimientos_recientes = query_db(query, params)
+
+    # Lista de materiales para el filtro
+    materiales = query_db(
+        "SELECT nombre FROM Materiales WHERE activo = 1 ORDER BY nombre"
     )
 
     return render_template(
         "reportes.html",
         stock_bajo=stock_bajo,
         movimientos_recientes=movimientos_recientes,
+        materiales=materiales,
+        request=request,
     )
 
 
