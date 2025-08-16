@@ -132,7 +132,7 @@ def movimientos():
         return redirect(url_for("movimientos"))
 
     # Listar movimientos y materiales disponibles
-    movimientos = query_db("SELECT * FROM VistaHistorial LIMIT 500")
+    movimientos = query_db("SELECT * FROM VistaHistorial")
     materiales = query_db(
         "SELECT id_material, codigo, nombre FROM Materiales WHERE activo = 1"
     )
@@ -173,7 +173,7 @@ def reportes():
         query += " AND material = ?"
         params.append(material)
 
-    query += " ORDER BY fecha_movimiento DESC LIMIT 500"
+    query += " ORDER BY fecha_movimiento DESC"
     movimientos_recientes = query_db(query, params)
 
     # Lista de materiales para el filtro
@@ -192,3 +192,11 @@ def reportes():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+""" 
+marca y descripcion(uso)
+
+
+cambio de aceite
+a que maquina, que filtros usa, cuantas horas trabajará 
+"""
