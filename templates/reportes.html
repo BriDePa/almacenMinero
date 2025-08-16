@@ -34,6 +34,24 @@
                         {% endfor %}
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label for="marca" class="form-label">Marca</label>
+                    <select class="form-select" id="marca" name="marca">
+                        <option value="">Todas</option>
+                        {% for mat in materiales %}
+                        <option value="{{ mat['marca'] }}" {% if request.args.get('marca')==mat['marca'] %}selected{% endif %}>{{ mat['marca'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="uso" class="form-label">Uso</label>
+                    <select class="form-select" id="uso" name="uso">
+                        <option value="">Todos</option>
+                        {% for mat in materiales %}
+                        <option value="{{ mat['uso'] }}" {% if request.args.get('uso')==mat['uso'] %}selected{% endif %}>{{ mat['uso'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-6">

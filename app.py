@@ -28,15 +28,16 @@ def materiales():
         # Agregar nuevo material
         codigo = request.form["codigo"]
         nombre = request.form["nombre"]
-        descripcion = request.form["descripcion"]
+        marca = request.form["marca"]
+        uso = request.form["uso"]
         unidad_medida = request.form["unidad_medida"]
         stock_minimo = request.form["stock_minimo"]
 
         try:
             db.execute(
-                "INSERT INTO Materiales (codigo, nombre, descripcion, unidad_medida, stock_minimo) "
-                "VALUES (?, ?, ?, ?, ?)",
-                (codigo, nombre, descripcion, unidad_medida, stock_minimo),
+                "INSERT INTO Materiales (codigo, nombre, marca, uso, unidad_medida, stock_minimo) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (codigo, nombre, marca, uso, unidad_medida, stock_minimo),
             )
             db.commit()
             flash("Material agregado correctamente", "success")
@@ -70,16 +71,17 @@ def editar_material(id_material):
     if request.method == "POST":
         codigo = request.form["codigo"]
         nombre = request.form["nombre"]
-        descripcion = request.form["descripcion"]
+        marca = request.form["marca"]
+        uso = request.form["uso"]
         unidad_medida = request.form["unidad_medida"]
         stock_minimo = request.form["stock_minimo"]
         try:
             db.execute(
                 """
-                UPDATE Materiales SET codigo=?, nombre=?, descripcion=?, unidad_medida=?, stock_minimo=?
+                UPDATE Materiales SET codigo=?, nombre=?, marca=?, uso=?, unidad_medida=?, stock_minimo=?
                 WHERE id_material=?
             """,
-                (codigo, nombre, descripcion, unidad_medida, stock_minimo, id_material),
+                (codigo, nombre, marca, uso, unidad_medida, stock_minimo, id_material),
             )
             db.commit()
             flash("Material actualizado correctamente", "success")
@@ -134,7 +136,7 @@ def movimientos():
     # Listar movimientos y materiales disponibles
     movimientos = query_db("SELECT * FROM VistaHistorial")
     materiales = query_db(
-        "SELECT id_material, codigo, nombre FROM Materiales WHERE activo = 1"
+        "SELECT id_material, codigo, nombre, marca, uso FROM Materiales WHERE activo = 1"
     )
     return render_template(
         "movimientos.html", movimientos=movimientos, materiales=materiales
@@ -152,6 +154,8 @@ def reportes():
     fecha_fin = request.args.get("fecha_fin")
     tipo_movimiento = request.args.get("tipo_movimiento")
     material = request.args.get("material")
+    marca = request.args.get("marca")
+    uso = request.args.get("uso")
 
     # Base de la consulta
     query = "SELECT * FROM VistaHistorial WHERE 1=1"
@@ -172,13 +176,21 @@ def reportes():
     if material:
         query += " AND material = ?"
         params.append(material)
+    # Filtro por marca
+    if marca:
+        query += " AND marca = ?"
+        params.append(marca)
+    # Filtro por uso
+    if uso:
+        query += " AND uso = ?"
+        params.append(uso)
 
     query += " ORDER BY fecha_movimiento DESC"
     movimientos_recientes = query_db(query, params)
 
     # Lista de materiales para el filtro
     materiales = query_db(
-        "SELECT nombre FROM Materiales WHERE activo = 1 ORDER BY nombre"
+        "SELECT nombre, marca, uso FROM Materiales WHERE activo = 1 ORDER BY nombre"
     )
 
     return render_template(
@@ -194,9 +206,8 @@ if __name__ == "__main__":
     app.run(debug=True)
 
 """ 
-marca y descripcion(uso)
-
+marca y uso
 
 cambio de aceite
-a que maquina, que filtros usa, cuantas horas trabajará 
+a que maquina, que filtros usa, cuantas horas trabajará
 """

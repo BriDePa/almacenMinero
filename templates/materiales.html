@@ -1,104 +1,144 @@
 <!DOCTYPE html>
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>Gestión de Materiales</h2>
 
 <div class="row mt-4">
-    <div class="col-md-5">
-        <div class="card">
-            <div class="card-header">
-                <h5>Agregar Nuevo Material</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Código o Modelo</label>
-                        <input type="text" class="form-control" name="codigo" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" name="nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Descripción</label>
-                        <textarea class="form-control" name="descripcion" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Unidad de Medida</label>
-                        {# <input type="text" class="form-control" name="unidad_medida" required> #}
-                        <select class="form-select" name="unidad_medida" required>
-                            <option value="Unidad(es)">Unidad(es)</option>
-                            <option value="Kilo(s)">Kilo(s)</option>
-                            <option value="Litro(s)">Litro(s)</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Stock Mínimo</label>
-                        <input type="number" class="form-control" name="stock_minimo" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </form>
-            </div>
-        </div>
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-header">
+        <h5>Agregar Nuevo Material</h5>
+      </div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label">Código o Modelo</label>
+            <input type="text" class="form-control" name="codigo" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" name="nombre" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Marca</label>
+            <input type="text" class="form-control" name="marca" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Uso</label>
+            <textarea class="form-control" name="uso" rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Unidad de Medida</label>
+            {#
+            <input
+              type="text"
+              class="form-control"
+              name="unidad_medida"
+              required
+            />
+            #}
+            <select class="form-select" name="unidad_medida" required>
+              <option value="Unidad(es)">Unidad(es)</option>
+              <option value="Kilo(s)">Kilo(s)</option>
+              <option value="Litro(s)">Litro(s)</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Stock Mínimo</label>
+            <input
+              type="number"
+              class="form-control"
+              name="stock_minimo"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+      </div>
     </div>
+  </div>
 
-    <div class="col-md-7">
-        <div class="card" id="inventario-section">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Inventario Actual</h5>
-                {# <button class="btn btn-outline-primary btn-sm" onclick="printSection('inventario-section')" type="button">
-                    Imprimir Inventario
-                </button> #}
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Nombre</th>
-                                <th>Stock</th>
-                                <th>Unidad</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for mat in materiales %}
-                            <tr>
-                                <td>{{ mat['codigo'] }}</td>
-                                <td>{{ mat['nombre'] }}</td>
-                                <td>{{ "%.2f"|format(mat['stock_actual']) }}</td>
-                                <td>{{ mat['unidad_medida'] }}</td>
-                                <td>
-                                    <span class="badge bg-{% if mat['estado'] == 'OK' %}success{% else %}warning{% endif %}">
-                                        {{ mat['estado'] }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{{ url_for('editar_material', id_material=mat['id_material']) }}" class="btn btn-sm btn-warning">Editar</a>
-                                    <form action="{{ url_for('eliminar_material', id_material=mat['id_material']) }}" method="post" style="display:inline;">
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este material? NO HAY VUELTA ATRAS');">Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+  <div class="col-md-7">
+    <div class="card" id="inventario-section">
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">Inventario Actual</h5>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          onclick="printSection('inventario-section')"
+          type="button"
+        >
+          Imprimir Inventario
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Uso</th>
+                <th>Stock</th>
+                <th>Unidad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mat in materiales %}
+              <tr>
+                <td>{{ mat['codigo'] }}</td>
+                <td>{{ mat['nombre'] }}</td>
+                <td>{{ mat['marca'] }}</td>
+                <td>{{ mat['uso'] }}</td>
+                <td>{{ "%.2f"|format(mat['stock_actual']) }}</td>
+                <td>{{ mat['unidad_medida'] }}</td>
+                <td>
+                  <span
+                    class="badge bg-{% if mat['estado'] == 'OK' %}success{% else %}warning{% endif %}"
+                  >
+                    {{ mat['estado'] }}
+                  </span>
+                </td>
+                <td>
+                  <a
+                    href="{{ url_for('editar_material', id_material=mat['id_material']) }}"
+                    class="btn btn-sm btn-warning"
+                    >Editar</a
+                  >
+                  <form
+                    action="{{ url_for('eliminar_material', id_material=mat['id_material']) }}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-danger"
+                      onclick="return confirm('¿Seguro que deseas eliminar este material? NO HAY VUELTA ATRAS');"
+                    >
+                      Eliminar
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <script>
-    function printSection(sectionId) {
-        var printContents = document.getElementById(sectionId).innerHTML;
-        var originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        location.reload();
-    }
+  function printSection(sectionId) {
+    var printContents = document.getElementById(sectionId).innerHTML;
+    var originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload();
+  }
 </script>
 {% endblock %}
